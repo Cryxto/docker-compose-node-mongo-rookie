@@ -1,0 +1,6 @@
+db-mn/mongo/*
+!db-mn/mongo/.gitkeep
+
+.vscode
+
+node_modules

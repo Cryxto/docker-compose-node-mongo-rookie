@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  
+  mongo-example:
+    image: "mongodb:cb2"
+    container_name: mongo_cb2
+    build: 
+      context: "./db-mn"
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - "./db-mn/mongo:/data/db"
+      - "./db-mn/mongodb-init.js:/docker-entrypoint-initdb.d/mongodb-init.js:ro"
+    ports:
+      - "27017:27017"
+    networks:
+      - network_express_cb2
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: test_docker
+    deploy:
+      resources: 
+        reservations:
+          cpus: "0.5"
+          memory: 70M
+        limits:
+          cpus: "0.8"
+          memory: 120M
+
+  express-example:
+    image: "src-express:cb2"
+    container_name: express_cb2
+    volumes:
+      - "./src:/src"
+    build:
+      context: "./src"
+      dockerfile: Dockerfile
+    environment:
+      APP_PORT: 3000
+    networks:
+      - network_express_cb2
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo-example
+    deploy:
+      resources: 
+        reservations:
+          cpus: "0.4"
+          memory: 60M
+        limits:
+          cpus: "0.7"
+          memory: 110M
+
+networks:
+  network_express_cb2:
+    name: network_express_cb2
+    driver: bridge
+  

@@ -1,0 +1,6 @@
+FROM mongo:5.0.15
+
+ENV DB_PORT=27017
+
+EXPOSE ${DB_PORT}
+
